@@ -1,55 +1,106 @@
-// import users from "./commonExport.mjs";
+const { getAll, getById, addBook, updateBook, deleteBook } = require("./books");
+const yargs = require("yargs");
+const { hideBin } = require("yargs/helpers");
+const { program } = require("commander");
 
-// const Andrii = require("./commonExport");
-// console.log(Andrii);
-// const { name } = require("./commonExport");
-// const { admin, user } = require("./data");
+const invokeAction = async ({ action, id, title, author }) => {
+  switch (action) {
+    case "read":
+      const allBooks = await getAll();
+      return console.log(allBooks);
 
-// const value = require("./data").foo();
+    case "getById":
+      const book = await getById(id);
+      return console.log(book);
 
-// console.log(value);
+    case "addBook":
+      const newBook = await addBook({ title, author });
+      return console.log(newBook);
 
-// for (let i = 0; i < 10; i++) {
-//   console.log(i);
-// }
+    case "updateBook":
+      const updatedBook = await updateBook(id, { author, title });
+      return console.log(updatedBook);
 
-// console.log(3);
+    case "deleteBook":
+      const deletedBook = await deleteBook(id);
+      return console.log(deletedBook);
 
-// console.log(name);
-// console.log(admin, user);
-// console.log(users);
-
-// const fs = require("fs");
-// fs.readFile("./files/file.txt", (error, data) => {
-//   console.log(error);
-//   console.log(data);
-// });
-
-// const fs = require("fs/promises");
-const fs = require("fs").promises;
-// fs.readFile("./files/file.txt").then(console.log).catch(console.log);
-
-async function readFile() {
-  try {
-    // const buffer = await fs.readFile("./files/file.txt");
-    // console.log(buffer);
-    // const text = buffer.toString();
-    // console.log(text);
-    const text = await fs.readFile("./files/file.txt", "utf-8");
-    console.log(text);
-  } catch (error) {
-    console.log(error);
+    default:
+      return console.log("Unknown action");
   }
-}
-readFile();
+};
 
-// async function addText() {
-//   await fs.appendFile("./files/file.txt", "\nHello Andrii");
+program
+  .option("-a, --action, <type>")
+  .option("-i, --id, <type>")
+  .option("-t, --title, <type>")
+  .option("-at, --author, <type>");
+
+program.parse();
+
+const options = program.opts();
+
+invokeAction(options);
+
+// const invokeAction = async ({ action, id, title, author }) => {
+//   const normalizedId = id + "";
+//   switch (action) {
+//     case "read":
+//       const allBooks = await getAll();
+//       return console.log(allBooks);
+
+//     case "getById":
+//       const book = await getById(normalizedId);
+//       return console.log(book);
+
+//     case "addBook":
+//       const newBook = await addBook({ title, author });
+//       return console.log(newBook);
+
+//     case "updateBook":
+//       const updatedBook = await updateBook(normalizedId, { author, title });
+//       return console.log(updatedBook);
+
+//     case "deleteBook":
+//       const deletedBook = await deleteBook(normalizedId);
+//       return console.log(deletedBook);
+
+//     default:
+//       return console.log("Unknown action");
+//   }
+// };
+
+// const arr = hideBin(process.argv);
+// const { argv } = yargs(arr);
+// invokeAction(argv);
+
+// console.log(arr);
+// console.log(argv);
+
+// node index --action deleteBook --id CTHE0f1kkWwqS5sL2tI8_
+
+// const actionIndex = process.argv.indexOf("--action");
+// if (actionIndex !== -1) {
+//   const action = process.argv[actionIndex + 1];
+//   //   console.log(action);
+//   invokeAction({ action });
 // }
 
-// addText();
+/* invokeAction({
+  action: "deleteBook",
+  id: "lVdzJkhjLC3GfRsl168IF",
+  author: "Ivan Franko",
+});
+invokeAction({ action: "getById", id: "e1Tpn_I3wBkLREY6wG0lb" });
+invokeAction({
+  action: "addBook",
+  author: "Schevchenko",
+  title: "Cobsar",
+});
 
-async function replaceText() {
-  await fs.writeFile("./files/file.txt", "New data");
-}
-replaceText();
+invokeAction({
+  action: "updateBook",
+  id: "lVdzJkhjLC3GfRsl168IF",
+  author: "Ivan Franko",
+  title: "Virshi zbirka",
+}); */
